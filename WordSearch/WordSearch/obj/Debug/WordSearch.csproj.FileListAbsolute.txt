@@ -1,0 +1,10 @@
+D:\Documents\C#\ProjectWordSearch\WordSearch\WordSearch\obj\Debug\WordSearch.csprojResolveAssemblyReference.cache
+D:\Documents\C#\ProjectWordSearch\WordSearch\WordSearch\obj\Debug\WordSearch.WordSearch.resources
+D:\Documents\C#\ProjectWordSearch\WordSearch\WordSearch\obj\Debug\WordSearch.Properties.Resources.resources
+D:\Documents\C#\ProjectWordSearch\WordSearch\WordSearch\obj\Debug\WordSearch.csproj.GenerateResource.Cache
+D:\Documents\C#\ProjectWordSearch\WordSearch\WordSearch\obj\Debug\WordSearch.csproj.CoreCompileInputs.cache
+D:\Documents\C#\ProjectWordSearch\WordSearch\WordSearch\bin\Debug\WordSearch.exe.config
+D:\Documents\C#\ProjectWordSearch\WordSearch\WordSearch\bin\Debug\WordSearch.exe
+D:\Documents\C#\ProjectWordSearch\WordSearch\WordSearch\bin\Debug\WordSearch.pdb
+D:\Documents\C#\ProjectWordSearch\WordSearch\WordSearch\obj\Debug\WordSearch.exe
+D:\Documents\C#\ProjectWordSearch\WordSearch\WordSearch\obj\Debug\WordSearch.pdb
