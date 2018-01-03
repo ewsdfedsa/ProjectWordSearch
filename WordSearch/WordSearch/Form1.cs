@@ -39,6 +39,9 @@ namespace WordSearch
         public string[] culori_ro;
         public string[] culori_en;
 
+        public string[] autovehicul_ro;
+        public string[] autovehicul_en;
+
         // Constante selectare limba
         public static int LIMBA_ROMANA = 0;
         public static int LIMBA_ENGLEZA = 1;
@@ -47,6 +50,7 @@ namespace WordSearch
         public static int CATEGORIE_STIINTA = 0;
         public static int CATEGORIE_MEDICINA = 1;
         public static int CATEGORIE_CULORI = 2;
+        public static int CATEGORIE_AUTOVEHICUL = 3;
 
         public WordSearch()
         { 
@@ -65,21 +69,35 @@ namespace WordSearch
             this.initializare_interfata();
         }
 
+        private void resetare_coordonate()
+        {
+            for (int i = 0; i < this.nr_max_cuvinte; i++)
+            {
+                for (int j = 0; j < this.nr_max_caractere; j++)
+                {
+                    this.coordonate_cuvinte[i][j] = new Point(-1, -1);
+                }
+            }
+        }
+
         private void initializare_cuvinte()
         {
             cuvinte_in_joc = new string[] { "", "", "", "", "", "", "", "", "", "" };
 
-            stiinta_ro = new string[] { "telescop", "computer", "multimetru", "senzor", "traductor", "pendul", "resort", "gravitatie" };
-            stiinta_en = new string[] { "telescope", "computer", "multimeter", "sensor", "traductor", "pendulum", "spring", "gravity" };
+            stiinta_ro = new string[] { "osciloscop", "telescop", "computer", "multimetru", "senzor", "traductor", "pendul", "resort", "gravitatie" };
+            stiinta_en = new string[] { "oscilloscope", "telescope", "computer", "multimeter", "sensor", "traductor", "pendulum", "spring", "gravity" };
 
-            medicina_ro = new string[] { "analiza", "docotr", "medicament", "fiola", "seringa", "stetoscop", "microscop", "ambulanta" };
-            medicina_en = new string[] { "analyze", "doctor", "drug", "vial", "syringe", "stethoscope", "microscope", "ambulance" };
+            medicina_ro = new string[] { "deseuri", "analiza", "docotr", "medicament", "fiola", "seringa", "stetoscop", "microscop", "ambulanta" };
+            medicina_en = new string[] { "waste", "analyze", "doctor", "drug", "vial", "syringe", "stethoscope", "microscope", "ambulance" };
 
-            culori_ro = new string[] { "albastru", "portocaliu", "galben", "mov", "verde", "roz", "maro", "gri", "negru", "alb" };
-            culori_en = new string[] { "blue", "orange", "yellow", "purple", "green", "pink", "brown", "grey", "black", "white" };
+            culori_ro = new string[] { "bej", "rosu", "albastru", "portocaliu", "galben", "mov", "verde", "roz", "maro", "gri", "negru", "alb" };
+            culori_en = new string[] { "beige", "red", "blue", "orange", "yellow", "purple", "green", "pink", "brown", "grey", "black", "white" };
 
-            limba_romana = new string[][] { stiinta_ro, medicina_ro, culori_ro };
-            limba_engleza = new string[][] { stiinta_en, medicina_en, culori_en };
+            autovehicul_ro = new string[] { "volan", "frana", "roata", "claxon", "stergatoare", "parbriz", "semnalizare", "alarma", "centura", "faruri" };
+            autovehicul_en = new string[] { "steering", "brake", "wheel", "horn", "wipers", "windshield", "indicator", "alarm", "belt", "headlights" };
+
+            limba_romana = new string[][] { stiinta_ro, medicina_ro, culori_ro, autovehicul_ro };
+            limba_engleza = new string[][] { stiinta_en, medicina_en, culori_en, autovehicul_en };
             cuvinte = new string[][][] { limba_romana, limba_engleza };
         }
 
@@ -118,6 +136,7 @@ namespace WordSearch
             comboBox2.Items.Add("Stiinta");
             comboBox2.Items.Add("Medicina");
             comboBox2.Items.Add("Culori");
+            comboBox2.Items.Add("Autovehicul");
         }
 
         private void pregateste_joc()
@@ -188,7 +207,7 @@ namespace WordSearch
                     Console.WriteLine("Coordonata x {0}.", x.ToString());
                     if(x + this.cuvinte_in_joc[i].Length > this.dificultate_in_joc)
                     {
-                        x = this.dificultate_in_joc - this.cuvinte_in_joc[i].Length;
+                        x = this.dificultate_in_joc - this.cuvinte_in_joc[i].Length + 1;
                         Console.WriteLine("Coordonata formatata x {0}.", x.ToString());
                     }
 
@@ -207,7 +226,7 @@ namespace WordSearch
                     Console.WriteLine("Coordonata y {0}.", x.ToString());
                     if (y + this.cuvinte_in_joc[i].Length > this.dificultate_in_joc)
                     {
-                        y = this.dificultate_in_joc - this.cuvinte_in_joc[i].Length;
+                        y = this.dificultate_in_joc - this.cuvinte_in_joc[i].Length + 1;
                         Console.WriteLine("Coordonata formatata y {0}.", y.ToString());
                     }
                     for (int litera = 0; litera < this.cuvinte_in_joc[i].Length; litera++)
@@ -249,8 +268,7 @@ namespace WordSearch
                 Console.WriteLine("Nu exista suficiente cuvinte potrivite in limba si categoria selectata!");
                 return -1;
             }
-
-            string[] cuvinte;
+            
             List<int> cuvinte_alese = new List<int>();
             int nr_aleatoriu;
             Random generator_nr_aleatoriu = new Random();
@@ -337,6 +355,11 @@ namespace WordSearch
                 case "CULORI":
                     {
                         categoria = 2;
+                        break;
+                    }
+                case "AUTOVEHICUL":
+                    {
+                        categoria = 3;
                         break;
                     }
                 default:
