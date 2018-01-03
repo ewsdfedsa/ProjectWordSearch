@@ -53,7 +53,7 @@ namespace WordSearch
         public static int CATEGORIE_AUTOVEHICUL = 3;
 
         public WordSearch()
-        { 
+        {
             this.dificultate_maxima = 20;
             this.dificultate_minima = 10;
 
@@ -118,12 +118,15 @@ namespace WordSearch
                     x = x_initial + (j * dimensiune_casuta); // se calculeaza coordonata x a casutei
                     y = y_initial + (i * dimensiune_casuta); // se calculeaza coordonata y a casutei
                     this.matrice_joc[i, j] = new TextBox(); // se creeaza o noua casuta
+                    this.matrice_joc[i, j].Click += new EventHandler(this.casuta_apasata);
                     this.Controls.Add(this.matrice_joc[i, j]); // se adauga casuta creata la forma existenta
                     this.matrice_joc[i, j].Size = new Size(dimensiune_casuta, dimensiune_casuta); // se dimensioneaza
                     this.matrice_joc[i, j].Location = new Point(x, y); /// se pozitioneaza
                     this.matrice_joc[i, j].Text = "0"; // se scrie un text initial (optional)
                     this.matrice_joc[i, j].TextAlign = HorizontalAlignment.Center; // se aliniaza textul pe centru
-                    this.matrice_joc[i, j].Enabled = false;
+                    this.matrice_joc[i, j].Enabled = true;
+                    this.matrice_joc[i, j].ReadOnly = true;
+                    this.matrice_joc[i, j].Name = "casuta_" + i.ToString() + "_" + j.ToString(); 
                     this.matrice_joc[i, j].Hide();
                 }
             }
@@ -191,6 +194,7 @@ namespace WordSearch
         {
             Random generator_nr_aleatoriu = new Random();
             bool cuvantul_a_fost_adaugat;
+            bool cuvantul_incape;
             int directie_cuvant; // 0 = vertical, 1 = orizontal
             int x;
             int y;
@@ -199,43 +203,81 @@ namespace WordSearch
             {
                 cuvantul_a_fost_adaugat = false;
                 directie_cuvant = generator_nr_aleatoriu.Next(0, 2);
-                Console.WriteLine("directie adaugare cuvant: {0}.", directie_cuvant.ToString());
+                Console.WriteLine("adaugare cuvant: {0}, directie: {1}", this.cuvinte_in_joc[i].ToString(), directie_cuvant.ToString());
 
                 if(directie_cuvant == 0) // verticala
                 {
+                    cuvantul_incape = false;
                     x = generator_nr_aleatoriu.Next(0, this.dificultate_in_joc);
-                    Console.WriteLine("Coordonata x {0}.", x.ToString());
+                    y = generator_nr_aleatoriu.Next(0, this.dificultate_in_joc);
+                    Console.WriteLine("Coordonata x={0}, y={1}.", x.ToString(), y.ToString());
                     if(x + this.cuvinte_in_joc[i].Length > this.dificultate_in_joc)
                     {
-                        x = this.dificultate_in_joc - this.cuvinte_in_joc[i].Length + 1;
-                        Console.WriteLine("Coordonata formatata x {0}.", x.ToString());
+                        x = this.dificultate_in_joc - this.cuvinte_in_joc[i].Length;
+                        Console.WriteLine("Coordonata formatata x={0}, y={1}.", x.ToString(), y.ToString());
                     }
 
-                    y = generator_nr_aleatoriu.Next(0, this.dificultate_in_joc);
 
-                    for(int litera=0; litera < this.cuvinte_in_joc[i].Length; litera++)
+                    for (int litera = 0; litera < this.cuvinte_in_joc[i].Length; litera++)
                     {
-                        this.matrice_joc[x + litera, y].Text = this.cuvinte_in_joc[i][litera].ToString();
+                        if (this.matrice_joc[x + litera, y].Text == "" || this.matrice_joc[x + litera, y].Text == this.cuvinte_in_joc[i][litera].ToString())
+                        {
+                            cuvantul_incape = true;
+                        }
+                        else
+                        {
+                            cuvantul_incape = false;
+                            break;
+                        }
+                    }
+
+                    if(cuvantul_incape)
+                    {
+                        for (int litera = 0; litera < this.cuvinte_in_joc[i].Length; litera++)
+                        {
+                            this.matrice_joc[x + litera, y].Text = this.cuvinte_in_joc[i][litera].ToString();
+                            this.matrice_joc[litera + x, y].BackColor = Color.LightPink;
+                        }
+                        cuvantul_a_fost_adaugat = true;
                     }
                 }
                 else if(directie_cuvant == 1) // orizontala
                 {
-
+                    cuvantul_incape = false;
                     x = generator_nr_aleatoriu.Next(0, this.dificultate_in_joc);
                     y = generator_nr_aleatoriu.Next(0, this.dificultate_in_joc);
-                    Console.WriteLine("Coordonata y {0}.", x.ToString());
+                    Console.WriteLine("Coordonata x={0}, y={1}.", x.ToString(), y.ToString());
                     if (y + this.cuvinte_in_joc[i].Length > this.dificultate_in_joc)
                     {
-                        y = this.dificultate_in_joc - this.cuvinte_in_joc[i].Length + 1;
-                        Console.WriteLine("Coordonata formatata y {0}.", y.ToString());
+                        y = this.dificultate_in_joc - this.cuvinte_in_joc[i].Length;
+                        Console.WriteLine("Coordonata formatata x={0}, y={1}.", x.ToString(), y.ToString());
                     }
+
                     for (int litera = 0; litera < this.cuvinte_in_joc[i].Length; litera++)
                     {
-                        this.matrice_joc[x, litera + y].Text = this.cuvinte_in_joc[i][litera].ToString();
+                        Console.WriteLine("Verificare celula: {0}, {1}", x.ToString(), (y+litera).ToString());
+                        if (this.matrice_joc[x, y + litera].Text == "" || this.matrice_joc[x, y + litera].Text == this.cuvinte_in_joc[i][litera].ToString())
+                        {
+                            cuvantul_incape = true;
+                        }
+                        else
+                        {
+                            cuvantul_incape = false;
+                            break;
+                        }
+                    }
+
+                    if(cuvantul_incape)
+                    {
+
+                        for (int litera = 0; litera < this.cuvinte_in_joc[i].Length; litera++)
+                        {
+                            this.matrice_joc[x, litera + y].Text = this.cuvinte_in_joc[i][litera].ToString();
+                            this.matrice_joc[x, litera + y].BackColor = Color.LightPink;
+                        }
+                        cuvantul_a_fost_adaugat = true;
                     }
                 }
-
-                cuvantul_a_fost_adaugat = true;
 
                 if (!cuvantul_a_fost_adaugat) // incearca din nou adaugarea cuvantului
                 {
@@ -243,11 +285,25 @@ namespace WordSearch
                     continue;
                 }
             }
-            
+
+            for (int i = 0; i < this.dificultate_in_joc; i++)
+            {
+                for (int j = 0; j < this.dificultate_in_joc; j++)
+                {
+                    if (this.matrice_joc[i, j].Text == "")
+                    {
+                        const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+                        string str_rnd = chars[generator_nr_aleatoriu.Next(chars.Length)].ToString();
+                        this.matrice_joc[i, j].Text = str_rnd;
+                    }
+                }
+            }
         }
 
         private int pregateste_cuvintele(int numar_cuvinte, int limba, int categoria, int nr_min_caractere, int nr_max_caractere)
         {
+            listBox1.Items.Clear();
+
             if(numar_cuvinte > this.cuvinte[limba][categoria].Length)
             {
                 Console.WriteLine("Nu exista suficiente cuvinte in limba si categoria selectata!");
@@ -300,7 +356,10 @@ namespace WordSearch
                     continue;
                 }
                 cuvinte_alese.Add(nr_aleatoriu);
-                this.cuvinte_in_joc[i] = this.cuvinte[limba][categoria][nr_aleatoriu]; // se adauga cuvantul in lista de cuvinte folosite in jocul curent
+                this.cuvinte_in_joc[i] = this.cuvinte[limba][categoria][nr_aleatoriu].ToUpper(); // se adauga cuvantul in lista de cuvinte folosite in jocul curent
+                
+                listBox1.Items.Add(this.cuvinte_in_joc[i]);
+
                 Console.WriteLine("Se adauga cuvantul: {0} la joc.", this.cuvinte_in_joc[i].ToString());
             }
             return 0;
@@ -414,6 +473,8 @@ namespace WordSearch
                 for (int j = 0; j < dificultate_maxima; j++)
                 {
                     this.matrice_joc[i, j].Text = String.Empty;
+                    this.matrice_joc[i, j].BackColor = Color.White;
+                    this.matrice_joc[i, j].ForeColor = Color.Black;
                     this.matrice_joc[i, j].Hide();
                 }
             }
@@ -429,6 +490,25 @@ namespace WordSearch
                     this.matrice_joc[i, j].Show();
                 }
             }
+        }
+
+        private void casuta_apasata(Object sender, EventArgs e)
+        {
+            string nume_casuta = ((TextBox)sender).Name;
+
+            string[] coordonate = nume_casuta.Split('_');
+
+            int x, y;
+            Int32.TryParse(coordonate[1].ToString(), out x);
+            Int32.TryParse(coordonate[2].ToString(), out y);
+
+            Point coordonate_casuta = new Point(x, y);
+            this.verifica_cuvant(coordonate_casuta);
+        }
+
+        private void verifica_cuvant(Point coordonata)
+        {
+            Console.WriteLine("Se verifica casuta {0}, {1}...", coordonata.X, coordonata.Y);
         }
 
         private int preia_dificultatea()
@@ -451,7 +531,7 @@ namespace WordSearch
         private int preia_nr_max_caractere()
         {
             int nr_max_caractere;
-            if (Int32.TryParse(textBox4.Text, out nr_max_caractere) && nr_max_caractere >= this.nr_min_caractere && nr_max_caractere <= this.nr_max_caractere && nr_max_caractere <= this.dificultate_in_joc)
+            if (Int32.TryParse(textBox4.Text, out nr_max_caractere) && nr_max_caractere >= this.nr_min_caractere && nr_max_caractere <= this.nr_max_caractere && nr_max_caractere <= this.dificultate_in_joc - 1)
             {
                 Console.WriteLine("Nr max de caractere {0}.", nr_max_caractere.ToString());
             }
