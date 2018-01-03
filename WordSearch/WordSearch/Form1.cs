@@ -14,6 +14,10 @@ namespace WordSearch
     public partial class WordSearch : Form
     {
         public TextBox[, ] matrice_joc;
+        public string[] cuvinte_in_joc;
+        public int numar_cuvinte_in_joc;
+        public int dificultate_in_joc;
+        public Point[][] coordonate_cuvinte;
         public int dificultate_maxima;
         public int dificultate_minima;
         public int nr_max_cuvinte;
@@ -63,6 +67,8 @@ namespace WordSearch
 
         private void initializare_cuvinte()
         {
+            cuvinte_in_joc = new string[] { "", "", "", "", "", "", "", "", "", "" };
+
             stiinta_ro = new string[] { "telescop", "computer", "multimetru", "senzor", "traductor", "pendul", "resort", "gravitatie" };
             stiinta_en = new string[] { "telescope", "computer", "multimeter", "sensor", "traductor", "pendulum", "spring", "gravity" };
 
@@ -151,13 +157,74 @@ namespace WordSearch
             {
                 return;
             }
-
-
+            
             this.pregateste_casutele(dificultate);
+
             if(this.pregateste_cuvintele(nr_cuvinte, limba, categorie, nr_min_caractere, nr_max_caractere) == -1)
             {
                 return; // nu exista suficiente cuvinte in limba si categoria selectate
             }
+
+            this.adauga_cuvintele_pregatite_in_joc();
+        }
+
+        private void adauga_cuvintele_pregatite_in_joc()
+        {
+            Random generator_nr_aleatoriu = new Random();
+            bool cuvantul_a_fost_adaugat;
+            int directie_cuvant; // 0 = vertical, 1 = orizontal
+            int x;
+            int y;
+
+            for(int i=0; i<this.numar_cuvinte_in_joc; i++)
+            {
+                cuvantul_a_fost_adaugat = false;
+                directie_cuvant = generator_nr_aleatoriu.Next(0, 2);
+                Console.WriteLine("directie adaugare cuvant: {0}.", directie_cuvant.ToString());
+
+                if(directie_cuvant == 0) // verticala
+                {
+                    x = generator_nr_aleatoriu.Next(0, this.dificultate_in_joc);
+                    Console.WriteLine("Coordonata x {0}.", x.ToString());
+                    if(x + this.cuvinte_in_joc[i].Length > this.dificultate_in_joc)
+                    {
+                        x = this.dificultate_in_joc - this.cuvinte_in_joc[i].Length;
+                        Console.WriteLine("Coordonata formatata x {0}.", x.ToString());
+                    }
+
+                    y = generator_nr_aleatoriu.Next(0, this.dificultate_in_joc);
+
+                    for(int litera=0; litera < this.cuvinte_in_joc[i].Length; litera++)
+                    {
+                        this.matrice_joc[x + litera, y].Text = this.cuvinte_in_joc[i][litera].ToString();
+                    }
+                }
+                else if(directie_cuvant == 1) // orizontala
+                {
+
+                    x = generator_nr_aleatoriu.Next(0, this.dificultate_in_joc);
+                    y = generator_nr_aleatoriu.Next(0, this.dificultate_in_joc);
+                    Console.WriteLine("Coordonata y {0}.", x.ToString());
+                    if (y + this.cuvinte_in_joc[i].Length > this.dificultate_in_joc)
+                    {
+                        y = this.dificultate_in_joc - this.cuvinte_in_joc[i].Length;
+                        Console.WriteLine("Coordonata formatata y {0}.", y.ToString());
+                    }
+                    for (int litera = 0; litera < this.cuvinte_in_joc[i].Length; litera++)
+                    {
+                        this.matrice_joc[x, litera + y].Text = this.cuvinte_in_joc[i][litera].ToString();
+                    }
+                }
+
+                cuvantul_a_fost_adaugat = true;
+
+                if (!cuvantul_a_fost_adaugat) // incearca din nou adaugarea cuvantului
+                {
+                    i--;
+                    continue;
+                }
+            }
+            
         }
 
         private int pregateste_cuvintele(int numar_cuvinte, int limba, int categoria, int nr_min_caractere, int nr_max_caractere)
@@ -171,7 +238,7 @@ namespace WordSearch
             int cuvinte_potrivite = 0; // cuvinte care au numarul de cactere cuprins intre valorile selectate
             for(int i=0; i<this.cuvinte[limba][categoria].Length; i++)
             {
-                string cuvant = this.cuvinte[limba][limba][i];
+                string cuvant = this.cuvinte[limba][categoria][i];
                 if(cuvant.Length > nr_min_caractere && cuvant.Length < nr_max_caractere)
                 {
                     cuvinte_potrivite++;
@@ -187,6 +254,7 @@ namespace WordSearch
             List<int> cuvinte_alese = new List<int>();
             int nr_aleatoriu;
             Random generator_nr_aleatoriu = new Random();
+            this.numar_cuvinte_in_joc = numar_cuvinte;
 
             bool cuvant_adaugat_deja;
             bool cuvant_nepotrivit;
@@ -214,7 +282,8 @@ namespace WordSearch
                     continue;
                 }
                 cuvinte_alese.Add(nr_aleatoriu);
-                Console.WriteLine("Numar aleatoriu {0}/{1}", nr_aleatoriu.ToString(), this.cuvinte[limba][categoria].Length.ToString());
+                this.cuvinte_in_joc[i] = this.cuvinte[limba][categoria][nr_aleatoriu]; // se adauga cuvantul in lista de cuvinte folosite in jocul curent
+                Console.WriteLine("Se adauga cuvantul: {0} la joc.", this.cuvinte_in_joc[i].ToString());
             }
             return 0;
         }
@@ -345,6 +414,7 @@ namespace WordSearch
             if (Int32.TryParse(textBox1.Text, out dificultate) && dificultate >= this.dificultate_minima && dificultate <= this.dificultate_maxima)
             {
                 Console.WriteLine("Se genereaza matrice patratica de {0}x{0}.", dificultate.ToString());
+                this.dificultate_in_joc = dificultate;
             }
             else
             {
@@ -358,7 +428,7 @@ namespace WordSearch
         private int preia_nr_max_caractere()
         {
             int nr_max_caractere;
-            if (Int32.TryParse(textBox4.Text, out nr_max_caractere) && nr_max_caractere >= this.nr_min_caractere && nr_max_caractere <= this.nr_max_caractere)
+            if (Int32.TryParse(textBox4.Text, out nr_max_caractere) && nr_max_caractere >= this.nr_min_caractere && nr_max_caractere <= this.nr_max_caractere && nr_max_caractere <= this.dificultate_in_joc)
             {
                 Console.WriteLine("Nr max de caractere {0}.", nr_max_caractere.ToString());
             }
