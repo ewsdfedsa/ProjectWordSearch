@@ -14,6 +14,7 @@ namespace WordSearch
     public partial class WordSearch : Form
     {
         public TextBox[, ] matrice_joc;
+        public Label[] lista_status_cuvinte;
         public string[] cuvinte_in_joc;
         public int numar_cuvinte_in_joc;
         public int dificultate_in_joc;
@@ -64,22 +65,112 @@ namespace WordSearch
             this.nr_min_caractere = 3;
 
             this.initializare_cuvinte();
+            this.initializare_status_cuvinte();
             this.matrice_joc = new TextBox[dificultate_maxima, dificultate_maxima]; // maxim 20x20
             this.initializare_coordonate();
             InitializeComponent();
             this.initializare_interfata();
         }
 
+        private void initializare_status_cuvinte()
+        {
+            int x_initial = 130;
+            int y_initial = 60;
+            int distanta = 22;
+            int x, y; // coordonatele
+
+            this.lista_status_cuvinte = new Label[this.nr_max_cuvinte];
+
+            for(int i=0; i<this.nr_max_cuvinte; i++)
+            {
+                x = x_initial;
+                y = y_initial + i * distanta;
+                this.lista_status_cuvinte[i] = new Label();
+                this.Controls.Add(this.lista_status_cuvinte[i]);
+                this.lista_status_cuvinte[i].Text = "";
+                this.lista_status_cuvinte[i].Location = new Point(x, y); /// se pozitioneaza
+                this.lista_status_cuvinte[i].Show();
+            }
+        }
+
+        private void reseteaza_status_cuvinte()
+        {
+
+            FontFamily font_marcare = this.lista_status_cuvinte[0].Font.FontFamily;
+            Font font = new Font(
+               font_marcare,
+               9,
+               FontStyle.Regular,
+               GraphicsUnit.Pixel);
+
+            for (int i = 0; i < this.nr_max_cuvinte; i++)
+            {
+                this.lista_status_cuvinte[i].Text = "";
+                this.lista_status_cuvinte[i].Font = font;
+                this.lista_status_cuvinte[i].ForeColor = Color.Black;
+                this.lista_status_cuvinte[i].Hide();
+            }
+        }
+
+        private void marcheaza_cuvantul_gasit(int index_cuvant)
+        {
+            FontFamily font_marcare = this.lista_status_cuvinte[index_cuvant].Font.FontFamily;
+            Font font = new Font(
+               font_marcare,
+               9,
+               FontStyle.Strikeout,
+               GraphicsUnit.Pixel);
+
+            this.lista_status_cuvinte[index_cuvant].Font = font;
+            this.lista_status_cuvinte[index_cuvant].ForeColor = Color.Red;
+
+            for (int k = 0; k < this.coordonate_cuvinte[index_cuvant].Length; k++)
+            {
+                if (this.coordonate_cuvinte[index_cuvant][k] != "99_99")
+                {
+                    for (int i = 0; i < dificultate_maxima; i++) // se creeaza matricea jocului
+                    {
+                        for (int j = 0; j < dificultate_maxima; j++)
+                        {
+                            string nume_casuta = "casuta_" + this.coordonate_cuvinte[index_cuvant][k];
+                            if(this.matrice_joc[i, j].Name == nume_casuta)
+                            {
+                                this.matrice_joc[i, j].BackColor = Color.LightPink;
+                                //Console.WriteLine("Se marcheaza casuta {0}.", this.matrice_joc[i, j].Name);
+                            }
+                        }
+                    }
+                    //Console.WriteLine("Coordonate cuvant: {0}", this.coordonate_cuvinte[index_cuvant][k]);
+                }
+            }
+        }
+
         private void initializare_coordonate()
         {
-            string[] coordonate_initiale = new string[] { "99_99","99_99","99_99","99_99","99_99","99_99","99_99","99_99","99_99","99_99","99_99","99_99","99_99","99_99","99_99","99_99","99_99","99_99","99_99","99_99" };
-            this.coordonate_cuvinte = new string[][] { coordonate_initiale, coordonate_initiale, coordonate_initiale, coordonate_initiale, coordonate_initiale, coordonate_initiale, coordonate_initiale, coordonate_initiale, coordonate_initiale, coordonate_initiale, };
+            string[] coordonate_initiale0 = new string[] { "99_99", "99_99", "99_99", "99_99", "99_99", "99_99" ,"99_99", "99_99", "99_99", "99_99", "99_99", "99_99", "99_99", "99_99", "99_99", "99_99", "99_99", "99_99", "99_99", "99_99" };
+            string[] coordonate_initiale1 = new string[] { "99_99", "99_99", "99_99", "99_99", "99_99", "99_99", "99_99", "99_99", "99_99", "99_99", "99_99", "99_99", "99_99", "99_99", "99_99", "99_99", "99_99", "99_99", "99_99", "99_99" };
+            string[] coordonate_initiale2 = new string[] { "99_99", "99_99", "99_99", "99_99", "99_99", "99_99", "99_99", "99_99", "99_99", "99_99", "99_99", "99_99", "99_99", "99_99", "99_99", "99_99", "99_99", "99_99", "99_99", "99_99" };
+            string[] coordonate_initiale3 = new string[] { "99_99", "99_99", "99_99", "99_99", "99_99", "99_99", "99_99", "99_99", "99_99", "99_99", "99_99", "99_99", "99_99", "99_99", "99_99", "99_99", "99_99", "99_99", "99_99", "99_99" };
+            string[] coordonate_initiale4 = new string[] { "99_99", "99_99", "99_99", "99_99", "99_99", "99_99", "99_99", "99_99", "99_99", "99_99", "99_99", "99_99", "99_99", "99_99", "99_99", "99_99", "99_99", "99_99", "99_99", "99_99" };
+            string[] coordonate_initiale5 = new string[] { "99_99", "99_99", "99_99", "99_99", "99_99", "99_99", "99_99", "99_99", "99_99", "99_99", "99_99", "99_99", "99_99", "99_99", "99_99", "99_99", "99_99", "99_99", "99_99", "99_99" };
+            string[] coordonate_initiale6 = new string[] { "99_99", "99_99", "99_99", "99_99", "99_99", "99_99", "99_99", "99_99", "99_99", "99_99", "99_99", "99_99", "99_99", "99_99", "99_99", "99_99", "99_99", "99_99", "99_99", "99_99" };
+            string[] coordonate_initiale7 = new string[] { "99_99", "99_99", "99_99", "99_99", "99_99", "99_99", "99_99", "99_99", "99_99", "99_99", "99_99", "99_99", "99_99", "99_99", "99_99", "99_99", "99_99", "99_99", "99_99", "99_99" };
+            string[] coordonate_initiale8 = new string[] { "99_99", "99_99", "99_99", "99_99", "99_99", "99_99", "99_99", "99_99", "99_99", "99_99", "99_99", "99_99", "99_99", "99_99", "99_99", "99_99", "99_99", "99_99", "99_99", "99_99" };
+            string[] coordonate_initiale9 = new string[] { "99_99", "99_99", "99_99", "99_99", "99_99", "99_99", "99_99", "99_99", "99_99", "99_99", "99_99", "99_99", "99_99", "99_99", "99_99", "99_99", "99_99", "99_99", "99_99", "99_99" };
+            this.coordonate_cuvinte = new string[][] { coordonate_initiale0, coordonate_initiale1, coordonate_initiale2, coordonate_initiale3, coordonate_initiale4, coordonate_initiale5, coordonate_initiale6, coordonate_initiale7, coordonate_initiale8, coordonate_initiale9 };
         }
 
         private void resetare_coordonate()
         {
-            string[] coordonate_initiale = new string[] { "99_99", "99_99", "99_99", "99_99", "99_99", "99_99", "99_99", "99_99", "99_99", "99_99", "99_99", "99_99", "99_99", "99_99", "99_99", "99_99", "99_99", "99_99", "99_99", "99_99" };
-            this.coordonate_cuvinte = new string[][] { coordonate_initiale, coordonate_initiale, coordonate_initiale, coordonate_initiale, coordonate_initiale, coordonate_initiale, coordonate_initiale, coordonate_initiale, coordonate_initiale, coordonate_initiale, };
+            Console.WriteLine("Resetare coordonate");
+
+            for(int i=0; i<this.nr_max_cuvinte; i++)
+            {
+                for(int j=0; j<this.nr_max_caractere; j++)
+                {
+                    this.coordonate_cuvinte[i][j] = "99_99";
+                }
+            }
         }
 
         private void initializare_cuvinte()
@@ -194,32 +285,60 @@ namespace WordSearch
 
         private void adauga_cuvintele_pregatite_in_joc()
         {
+            this.resetare_coordonate();
+            Console.WriteLine("Se adauga cuvintele...");
+
             Random generator_nr_aleatoriu = new Random();
             bool cuvantul_a_fost_adaugat;
             bool cuvantul_incape;
             int directie_cuvant; // 0 = vertical, 1 = orizontal
             int x;
             int y;
-            this.resetare_coordonate();
 
             for(int i=0; i<this.numar_cuvinte_in_joc; i++)
             {
                 cuvantul_a_fost_adaugat = false;
                 directie_cuvant = generator_nr_aleatoriu.Next(0, 2);
-                Console.WriteLine("adaugare cuvant: {0}, directie: {1}", this.cuvinte_in_joc[i].ToString(), directie_cuvant.ToString());
+
+                string directie_str;
+
+                switch(directie_cuvant)
+                {
+                    case 0:
+                        {
+                            directie_str = "verticala";
+                            break;
+                        }
+                    case 1:
+                        {
+                            directie_str = "orizontala";
+                            break;
+                        }
+                    case 2:
+                        {
+                            directie_str = "oblica";
+                            break;
+                        }
+                    default:
+                        {
+                            directie_str = "necunoscuta";
+                            break;
+                        }
+                }
+
+                Console.WriteLine("Adaugare cuvant: {0}, directie: {1}", this.cuvinte_in_joc[i].ToString(), directie_str);
 
                 if(directie_cuvant == 0) // verticala
                 {
                     cuvantul_incape = false;
                     x = generator_nr_aleatoriu.Next(0, this.dificultate_in_joc);
                     y = generator_nr_aleatoriu.Next(0, this.dificultate_in_joc);
-                    Console.WriteLine("Coordonata x={0}, y={1}.", x.ToString(), y.ToString());
+                    //Console.WriteLine("Coordonata x={0}, y={1}.", x.ToString(), y.ToString());
                     if(x + this.cuvinte_in_joc[i].Length > this.dificultate_in_joc)
                     {
                         x = this.dificultate_in_joc - this.cuvinte_in_joc[i].Length;
-                        Console.WriteLine("Coordonata formatata x={0}, y={1}.", x.ToString(), y.ToString());
+                        //Console.WriteLine("Coordonata formatata x={0}, y={1}.", x.ToString(), y.ToString());
                     }
-
 
                     for (int litera = 0; litera < this.cuvinte_in_joc[i].Length; litera++)
                     {
@@ -239,12 +358,13 @@ namespace WordSearch
                         for (int litera = 0; litera < this.cuvinte_in_joc[i].Length; litera++)
                         {
                             this.matrice_joc[x + litera, y].Text = this.cuvinte_in_joc[i][litera].ToString();
-                            this.matrice_joc[x + litera, y].BackColor = Color.LightPink;
+                            //this.matrice_joc[x + litera, y].BackColor = Color.LightPink;
                             string coordonate = (x + litera).ToString() + "_" + y.ToString();
                             this.coordonate_cuvinte[i][litera] = coordonate;
-                            Console.WriteLine("Adaugare coordonate: {0} pt cuvantul nr {1} la coordonatele: {1}, {2}", coordonate, i.ToString(), litera.ToString());
+                            //Console.WriteLine("Adaugare coordonate: {0} pt cuvantul nr {1} la coordonatele: {1}, {2}", coordonate, i.ToString(), litera.ToString());
                         }
                         cuvantul_a_fost_adaugat = true;
+                        Console.WriteLine("Cuvantul {0} a fost adaugat!", this.cuvinte_in_joc[i]);
                     }
                 }
                 else if(directie_cuvant == 1) // orizontala
@@ -252,11 +372,11 @@ namespace WordSearch
                     cuvantul_incape = false;
                     x = generator_nr_aleatoriu.Next(0, this.dificultate_in_joc);
                     y = generator_nr_aleatoriu.Next(0, this.dificultate_in_joc);
-                    Console.WriteLine("Coordonata x={0}, y={1}.", x.ToString(), y.ToString());
+                    //Console.WriteLine("Coordonata x={0}, y={1}.", x.ToString(), y.ToString());
                     if (y + this.cuvinte_in_joc[i].Length > this.dificultate_in_joc)
                     {
                         y = this.dificultate_in_joc - this.cuvinte_in_joc[i].Length;
-                        Console.WriteLine("Coordonata formatata x={0}, y={1}.", x.ToString(), y.ToString());
+                        //Console.WriteLine("Coordonata formatata x={0}, y={1}.", x.ToString(), y.ToString());
                     }
 
                     for (int litera = 0; litera < this.cuvinte_in_joc[i].Length; litera++)
@@ -278,20 +398,23 @@ namespace WordSearch
                         for (int litera = 0; litera < this.cuvinte_in_joc[i].Length; litera++)
                         {
                             this.matrice_joc[x, litera + y].Text = this.cuvinte_in_joc[i][litera].ToString();
-                            this.matrice_joc[x, litera + y].BackColor = Color.LightPink;
+                            //this.matrice_joc[x, litera + y].BackColor = Color.LightPink;
                             string coordonate = x.ToString() + "_" + (litera + y).ToString();
                             this.coordonate_cuvinte[i][litera] = coordonate;
-                            Console.WriteLine("Adaugare coordonate: {0} pt cuvantul nr {1} la coordonatele: {1}, {2}", coordonate, i.ToString(), litera.ToString());
+                            //Console.WriteLine("Adaugare coordonate: {0} pt cuvantul nr {1} la coordonatele: {1}, {2}", coordonate, i.ToString(), litera.ToString());
                         }
                         cuvantul_a_fost_adaugat = true;
+                        Console.WriteLine("Cuvantul {0} a fost adaugat!", this.cuvinte_in_joc[i]);
                     }
                 }
 
                 if (cuvantul_a_fost_adaugat) // incearca din nou adaugarea cuvantului
                 {
+                    //this.afiseaza_coordonatele();
                 }
                 else
                 {
+                    Console.WriteLine("Imposibil de adaugat cuvantul la coordonatele calculate. Recalculare...");
                     i--;
                     continue;
                 }
@@ -314,7 +437,7 @@ namespace WordSearch
 
         private int pregateste_cuvintele(int numar_cuvinte, int limba, int categoria, int nr_min_caractere, int nr_max_caractere)
         {
-            listBox1.Items.Clear();
+            Console.WriteLine("Se pregatesc cuvintele pentru joc...");
 
             if(numar_cuvinte > this.cuvinte[limba][categoria].Length)
             {
@@ -336,7 +459,9 @@ namespace WordSearch
                 Console.WriteLine("Nu exista suficiente cuvinte potrivite in limba si categoria selectata!");
                 return -1;
             }
-            
+
+            this.reseteaza_status_cuvinte();
+
             List<int> cuvinte_alese = new List<int>();
             int nr_aleatoriu;
             Random generator_nr_aleatoriu = new Random();
@@ -350,6 +475,7 @@ namespace WordSearch
                 nr_aleatoriu = generator_nr_aleatoriu.Next(0, this.cuvinte[limba][categoria].Length);
                 cuvant_adaugat_deja = false;
                 cuvant_nepotrivit = false;
+
                 for(int j=0; j<cuvinte_alese.Count; j++)
                 {
                     if (nr_aleatoriu == cuvinte_alese[j]) // cuvantul a mai fost selectat odata
@@ -369,10 +495,11 @@ namespace WordSearch
                 }
                 cuvinte_alese.Add(nr_aleatoriu);
                 this.cuvinte_in_joc[i] = this.cuvinte[limba][categoria][nr_aleatoriu].ToUpper(); // se adauga cuvantul in lista de cuvinte folosite in jocul curent
-                
-                listBox1.Items.Add(this.cuvinte_in_joc[i]);
 
-                Console.WriteLine("Se adauga cuvantul: {0} la joc.", this.cuvinte_in_joc[i].ToString());
+                this.lista_status_cuvinte[i].Text = this.cuvinte_in_joc[i];
+                this.lista_status_cuvinte[i].Show();
+
+                Console.WriteLine("Se pregateste cuvantul: {0}.", this.cuvinte_in_joc[i].ToString());
             }
             return 0;
         }
@@ -383,7 +510,7 @@ namespace WordSearch
 
             if (Int32.TryParse(textBox2.Text, out nr_cuvinte) && nr_cuvinte >= this.nr_min_cuvinte && nr_cuvinte <= this.nr_max_cuvinte)
             {
-                Console.WriteLine("Se genereaza jocul cu {0} cuvinte.", nr_cuvinte.ToString());
+                Console.WriteLine("Se pregateste jocul cu {0} cuvinte.", nr_cuvinte.ToString());
             }
             else
             {
@@ -528,6 +655,8 @@ namespace WordSearch
                 {
                     if(this.coordonate_cuvinte[i][j] == coordonata_str)
                     {
+                        this.marcheaza_cuvantul_gasit(i);
+
                         for(int k=0; k<this.coordonate_cuvinte[i].Length; k++)
                         {
                             if (this.coordonate_cuvinte[i][k] != "99_99")
@@ -589,13 +718,11 @@ namespace WordSearch
             return nr_min_caractere;
         }
 
-        private void button1_Click(object sender, EventArgs e)
+        private void afiseaza_coordonatele()
         {
-            this.pregateste_joc();
-
-            for(int i=0; i<this.numar_cuvinte_in_joc; i++)
+            for (int i = 0; i < this.numar_cuvinte_in_joc; i++)
             {
-                for(int j=0; j<this.nr_max_caractere; j++)
+                for (int j = 0; j < this.nr_max_caractere; j++)
                 {
                     if (this.coordonate_cuvinte[i][j].ToString() != "99_99")
                     {
@@ -603,6 +730,16 @@ namespace WordSearch
                     }
                 }
             }
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            this.pregateste_joc();
+        }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+            this.afiseaza_coordonatele();
         }
     }
 }
